@@ -4,6 +4,8 @@ class Https {
     constructor(config = {}) {
 
         this.getToken = config.getToken; // token key
+        this.tokenHeaderKey = config.tokenHeaderKey || 'Authorization';
+        this.tokenKey = config.tokenKey || 'Bearer ';
         this.loading = config.loading !== false; // 是否显示loading
         this.rejectCallback = config.rejectCallback; // 请求失败处理
         this.api = config.api; // 地址
@@ -11,7 +13,7 @@ class Https {
         this.showLoading = config.showLoading; // loading ui和显示
         this.removeLoading = config.removeLoading; // 移除loading ui
         this.requestCount = 0;
-        this.requiredParams('api', 'getToken') // 必填项验证
+        this.requiredParams('api') // 必填项验证
         this.instance = axios.create({
             baseURL: this.api,
             timeout: config.timeout || 3000,
@@ -47,7 +49,6 @@ class Https {
     }
 
     handleError(error) {
-        //是否传递了vue component
         if (axios.isCancel(error)) { // 如果是用户主动取消的
             return;
         }
@@ -65,11 +66,11 @@ class Https {
             throw new Error("params is undefined or not an object")
         }
         //设置私有接口Authorization
-        if (params.authApi) {
+        if (this.getToken) {
             let token = this.getToken && this.getToken();
-            this.instance.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+            this.instance.defaults.headers.common[this.tokenHeaderKey] = this.tokenKey + token;
         } else {
-            delete this.instance.defaults.headers.common['Authorization'];
+            delete this.instance.defaults.headers.common[this.tokenHeaderKey];
         }
 
         return new Promise((resolve, reject) => {
@@ -89,7 +90,7 @@ class Https {
         });
     }
 
-    getConfig(method, url, data, config) {
+    getConfig(method, url, data) {
         let params = {
             url: url,
             method: method
@@ -99,38 +100,31 @@ class Https {
         } else {
             data && (params.data = data);
         }
-        //没有传递authApi参数都是私有接口
-        if (!config) {
-            config = {};
-            config.authApi = true;
-        }
-        if (config && !config.hasOwnProperty('authApi')) config.authApi = true;
-        config && Object.assign(params, config);
         return params;
     }
 
-    get(url, data, config) {
+    get(url, data) {
         this.setLoading()
-        let params = this.getConfig('get', url, data, config);
-        return this.request(params, config);
+        let params = this.getConfig('get', url, data);
+        return this.request(params);
     }
 
-    post(url, data, config) {
+    post(url, data) {
         this.setLoading()
-        let params = this.getConfig('post', url, data, config);
-        return this.request(params, config);
+        let params = this.getConfig('post', url, data);
+        return this.request(params);
     }
 
-    put(url, data, config) {
+    put(url, data) {
         this.setLoading()
-        let params = this.getConfig('put', url, data, config);
-        return this.request(params, config);
+        let params = this.getConfig('put', url, data);
+        return this.request(params);
     }
 
-    delete(url, data, config) {
+    delete(url, data) {
         this.setLoading()
-        let params = this.getConfig('delete', url, data, config);
-        return this.request(params, config);
+        let params = this.getConfig('delete', url, data);
+        return this.request(params);
     }
 
 }
