@@ -3,9 +3,9 @@ import axios from 'axios';
 class Https {
     constructor(config = {}) {
 
-        this.getToken = config.getToken; // token key
-        this.tokenHeaderKey = config.tokenHeaderKey || 'Authorization';
-        this.tokenKey = config.tokenKey || 'Bearer ';
+        this.getToken = config.getToken; // 获取token的方法 初始化时候若不传则认为是共有方法
+        this.tokenHeaderKey = config.tokenHeaderKey || 'Authorization'; //token  header key
+        this.tokenKey = config.tokenKey || 'Bearer '; // token 拼接字符串
         this.loading = config.loading !== false; // 是否显示loading
         this.rejectCallback = config.rejectCallback; // 请求失败处理
         this.api = config.api; // 地址
