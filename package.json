@@ -1,6 +1,6 @@
 {
   "name": "https-axios-service",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "基于axios封装的http请求",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "axios": "^0.21.1"
   }
 }
