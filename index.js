@@ -12,6 +12,8 @@ class Https {
         this.successCallback = config.successCallback; // 请求成功处理
         this.showLoading = config.showLoading; // loading ui和显示
         this.removeLoading = config.removeLoading; // 移除loading ui
+        this.requestSign = config.requestSign; // 接口签名
+        this.secret = config.secret; //  所需secret
         this.requestCount = 0;
         this.requiredParams('api') // 必填项验证
         this.instance = axios.create({
@@ -106,24 +108,36 @@ class Https {
     get(url, data) {
         this.setLoading()
         let params = this.getConfig('get', url, data);
+        if(this.requestSign && this.secret) {
+            params = this.getConfig('get', url, this.requestSign(this.secret, url, data));
+        }
         return this.request(params);
     }
 
     post(url, data) {
         this.setLoading()
         let params = this.getConfig('post', url, data);
+        if(this.requestSign && this.secret) {
+            params = this.getConfig('post', url, this.requestSign(this.secret, url, data));
+        }
         return this.request(params);
     }
 
     put(url, data) {
         this.setLoading()
         let params = this.getConfig('put', url, data);
+        if(this.requestSign && this.secret) {
+            params = this.getConfig('put', url, this.requestSign(this.secret, url, data));
+        }
         return this.request(params);
     }
 
     delete(url, data) {
         this.setLoading()
         let params = this.getConfig('delete', url, data);
+        if(this.requestSign && this.secret) {
+            params = this.getConfig('delete', url, this.requestSign(this.secret, url, data));
+        }
         return this.request(params);
     }
 
